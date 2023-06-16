@@ -12,32 +12,32 @@
 %   Copyright 2009 M. A. Caprio
 %
 %   This work may be distributed and/or modified under the
-%   conditions of the LaTeX Project Public License, either 
-%   version 1.3 of this license or (at your option) any later 
+%   conditions of the LaTeX Project Public License, either
+%   version 1.3 of this license or (at your option) any later
 %   version.  The latest version of this license is in
 %     http://www.latex-project.org/lppl.txt
-%   and version 1.3 or later is part of all distributions of 
+%   and version 1.3 or later is part of all distributions of
 %   LaTeX version 2005/12/01 or later.
 %
 %   This work has the LPPL maintenance status "maintained".
-% 
+%
 %   The Current Maintainer of this work is the author.
 %
 %   The contents of this work are listed in the README file.
 %
 % HISTORY
-% 
+%
 % Version 1.0 (2005/07/11)
 %   Created using custom-bib (merlin.mbs), with following manual modifications:
 %   -- remove trailing period from predefined volume, page, etc., abbreviations
 %   -- provide command \newblock to fix incompatibility between natbib
-%      and iopart (as of iopart version 1996/06/10) 
+%      and iopart (as of iopart version 1996/06/10)
 %   -- move edition after booktitle
+%   -- add version identifier to generated output
 %   -- for incollection and inproceedings, move volume from after publisher to before
 %   -- for any series with number, number after series
-%   -- add iopart-num version identifier to generated output
 % Version 2.0 (2006/12/21)
-%   -- define section field for proper formatting of lettered journal sections 
+%   -- define section field for proper formatting of lettered journal sections
 %      (suggested by Chris Latham)
 %   -- suppress printing of number for article, but provide issue field
 %      for periodicals with issue-based page numbering (suggested by Chris Latham)
@@ -49,34 +49,17 @@
 %   -- for incollection and inproceedings, put editors in correct location
 %   -- for journal: use same page formatting even if volume missing
 % Version 2.1 (2009/01/22)
-%   -- for incollection and inproceedings: support title of chapter (not appropriate 
+%   -- for incollection and inproceedings: support title of chapter (not appropriate
 %      to inbook)
 %   -- for book, proceedings, etc.: support volumetitle for multivolume book
-% Version 2.1+
-%   -- change \eprint command to display archive, with default value "arXiv"
-%   -- remove trailing period from predefined "et al" abbreviation
-%   -- provide parallel version which produes title output (requested by Roger Lewis and 
-%      Bhagirath Ghimire; code flagged with comment "mc: iopart-num-long")
-%   -- eliminate warning on "empty note" entry of type unpublished
-%   -- iopart-num.tex: update package recommendation from citesort to cite, update natbib
-%      guidelines, update to reflect iopart-num-long, update IOP author guidelines reference
-%   -- iopart-num.bib: add titles, verify journal references
-%
-% TODO
-%
-%   -- support for RevTeX 4.1 fields, incl. translation
-%   -- place nonnumeric value for year field at end, e.g., "at press"
-%   -- provide href for eprint (requested by Leo Stein)
-%   -- provide href for doi (requested by Leo Stein)
 %
 % LIMITATIONS
 %
-% Still not in IOP form: 
-%   -- for incollection and inproceedings, editors initials should precede rather 
+% Still not in IOP form:
+%   -- for incollection and inproceedings, editors initials should preceed rather
 %      than follow last name
 % Other:
-%   -- hyphenated first name loses hyphen
-
+%   -- hyphenated first names lose hyphen
 
 %% This is file `iopart-num.bst',
 %% generated with the docstrip utility.
@@ -86,7 +69,7 @@
 %% merlin.mbs  (with options: `seq-no,nm-rv,dt-beg,yr-blk,xmth,yrp-x,jtit-x,vol-bf,volp-blk,num-xser,jnm-x,add-pub,pub-par,pre-pub,isbn,issn,blk-com,com-blank,fin-bare,pp,ed,abr,ednx,mth-bare,ord,jabr,and-xcom,etal-it,revdata,eprint,url,url-blk')
 %% ----------------------------------------
 %% *** Institute of Physics (IOP) journals; Harvard-like numeric style ***
-%% 
+%%
 %% Copyright 1994-2002 Patrick W Daly
  % ===============================================================
  % IMPORTANT NOTICE:
@@ -122,6 +105,7 @@ ENTRY
     booktitle
     chapter
     collaboration
+    doi
     edition
     editor
     eid
@@ -205,8 +189,8 @@ FUNCTION {string.length}
   {
     string.length.s #1 #1 substring$ "" = not
   }
-  { 
-   string.length.i #1 + 'string.length.i := 
+  {
+   string.length.i #1 + 'string.length.i :=
    string.length.s #2 global.max$ substring$ 'string.length.s :=
   }
   while$
@@ -218,7 +202,7 @@ STRINGS { strip.s strip.t }
 INTEGERS { strip.i }
 
 % strip.leading -- {s t strip.leading} strips t from s if it appears
-%   as an initial substring 
+%   as an initial substring
 %   Example:   "abcdef" "abc" strip.leading   -> "def"
 %   Example:   "abcdef" "xyz" strip.leading   -> "abcdef"
 
@@ -234,7 +218,7 @@ FUNCTION{strip.leading}
 }
 
 % strip.trailing -- {s t strip.trailing} strips t from s if it appears
-%   as a terminal substring 
+%   as a terminal substring
 %   Example:   "abcdef" "def" strip.trailing  -> "abc"
 %   Example:   "abcdef" "xyz" strip.trailing  -> "abcdef"
 FUNCTION{strip.trailing}
@@ -320,9 +304,9 @@ FUNCTION {format.epilog}
 
 
 FUNCTION {fin.entry}
-{   
+{
 %mc
-format.epilog 
+format.epilog
 %mc end
   duplicate$ empty$
     'pop$
@@ -363,13 +347,13 @@ FUNCTION {remove.dots}
   { z empty$ not }
   {
 %mc patch to preserve the control sequence \. if it appears in a name
-   z #1 #2 substring$ "\." = 
-      { 
+   z #1 #2 substring$ "\." =
+      {
         % process "\." sequence
         z #3 global.max$ substring$ 'z :=
-        "\." * 
+        "\." *
       }
-      {    
+      {
         % process regular character
         z #1 #1 substring$
         z #2 global.max$ substring$ 'z :=
@@ -448,8 +432,7 @@ FUNCTION {bbl.and}
 { "and"}
 
 FUNCTION {bbl.etal}
-%mc { "et~al." }
-{ "et~al" }
+{ "et~al." }
 
 FUNCTION {bbl.editors}
 { "eds" }
@@ -622,8 +605,8 @@ FUNCTION {bibinfo.warn}
 FUNCTION {format.eprint}
 { eprint duplicate$ empty$
     'skip$
-    { 
-      "(\textit{Preprint} " 
+    {
+      "(\textit{Preprint} "
       swap$
        "\eprint"
       archive empty$
@@ -638,10 +621,22 @@ FUNCTION {format.eprint}
   if$
 }
 
+FUNCTION {doilink}
+{ duplicate$ empty$
+{ pop$ "" }
+{ doi empty$
+    { skip$ }
+    { "\href{http://dx.doi.org/" doi * "}{" * swap$ * "}" * }
+  if$
+}
+if$
+}
+
 FUNCTION {format.url}
 { url empty$
     { "" }
-    { "\urlprefix\url{" url * "}" * }
+    { "" }
+%    { "\urlprefix\url{" url * "}" * }
   if$
 }
 
@@ -923,7 +918,7 @@ FUNCTION {format.bvolume}
 %mc
     {
       series "series" bibinfo.check
-      empty$ 
+      empty$
         % no series: must be multivolume book
         {
           bbl.volume volume tie.or.space.prefix "volume" bibinfo.check * *
@@ -934,11 +929,11 @@ FUNCTION {format.bvolume}
           if$
         }
         % series: format as volume in series
-        { 
-          "(" 
+        {
+          "("
           series "series" bibinfo.check emphasize *
-          " " * bbl.volume * 
-          volume tie.or.space.prefix "volume" bibinfo.check * 
+          " " * bbl.volume *
+          volume tie.or.space.prefix "volume" bibinfo.check *
           ")" * *
         }
       if$
@@ -953,7 +948,7 @@ FUNCTION {format.number.series}
         { series field.or.null }
         { series empty$
             { number "number" bibinfo.check }
-        { 
+        {
           %% output.state mid.sentence =
           %%   { bbl.number }
           %%   { bbl.number capitalize }
@@ -961,13 +956,13 @@ FUNCTION {format.number.series}
           %% number tie.or.space.prefix "number" bibinfo.check * *
           %% bbl.in space.word *
           %% series "series" bibinfo.check *
-          %% " " * bbl.number * 
+          %% " " * bbl.number *
           %% number tie.or.space.prefix "number" bibinfo.check * *
 %mc
-              "(" 
+              "("
               series "series" bibinfo.check emphasize *
-              " " * bbl.number * 
-              number tie.or.space.prefix "number" bibinfo.check * 
+              " " * bbl.number *
+              number tie.or.space.prefix "number" bibinfo.check *
               ")" *
               *
 %mc end
@@ -1152,6 +1147,7 @@ FUNCTION {format.vol.num.pages}
     { format.journal.pages }
     { format.journal.eid }
   if$
+  doilink
 }
 
 FUNCTION {format.chapter.pages}
@@ -1353,9 +1349,6 @@ FUNCTION {article}
   format.authors "author" output.check
   format.date "year" output.check
   date.block
-% mc: iopart-num-long BEGIN
-  format.title "title" output.check
-% mc: iopart-num-long END
   crossref missing$
     {
 %mc add section handling
@@ -1480,9 +1473,9 @@ FUNCTION {incollection}
   date.block
   format.title "title" output.check
   crossref missing$
-    { 
+    {
       %% format.in.ed.booktitle "booktitle" output.check
-%mc   
+%mc
       format.booktitle "booktitle" output.check
       format.bvolume output
       format.number.series output
@@ -1511,10 +1504,10 @@ FUNCTION {inproceedings}
   date.block
   format.title "title" output.check
   crossref missing$
-    { 
+    {
 
       %%format.in.ed.booktitle "booktitle" output.check
-%mc   
+%mc
       format.booktitle "booktitle" output.check
       format.bvolume output
       format.number.series output
@@ -1681,8 +1674,7 @@ FUNCTION {unpublished}
   format.date output
   date.block
   format.title "title" output.check
-%mc  format.note "note" output.check
-  format.note output
+  format.note "note" output.check
   format.eprint output
   format.url output
   fin.entry
@@ -1724,12 +1716,9 @@ FUNCTION {begin.bib}
   write$ newline$
   "\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi"
   write$ newline$
-%%  "\providecommand{\eprint}[2][]{\url{#2}}"
-  "% \eprint[archive=arXiv]{identifier}"
+  "\providecommand{\eprint}[2][]{\url{#2}}"
   write$ newline$
-  "\providecommand{\eprint}[2][arXiv]{#1:\linebreak[0]#2}"
-  write$ newline$
-  "% Bibliography created with iopart-num v2.1+"
+  "% Bibliography created with iopart-num v2.1"
   write$ newline$
   "% /biblio/bibtex/contrib/iopart-num"
   write$ newline$
